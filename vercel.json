@@ -2,14 +2,14 @@
   "version": 2,
   "builds": [
     {
-      "src": "bajaj_fin/index.js",
+      "src": "index.js",
       "use": "@vercel/node"
     }
   ],
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "bajaj_fin/index.js"
+      "dest": "index.js"
     }
   ]
 }
