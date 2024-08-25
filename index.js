@@ -1,38 +1,49 @@
 const express = require('express');
 const app = express();
-const port = process.env.PORT || 3000;
+const bodyParser = require('body-parser');
+const cors = require('cors');
 
-app.use(express.json());
+app.use(bodyParser.json());
+app.use(cors());
 
 app.post('/bfhl', (req, res) => {
-  const { user_id, college_email_id, college_roll_number, numbers, alphabets } = req.body;
+    try {
+        const data = req.body.data || [];
+        const userId = "reddyvari_rushikesh_reddy_15082003";  
+        const email = "vari.rushikeshreddy2021@vitstudent.ac.in";  
+        const rollNumber = "21BIT0541";  
 
-  // Validate the request body
-  if (!user_id || !college_email_id || !college_roll_number || !Array.isArray(numbers) || !Array.isArray(alphabets)) {
-    return res.status(400).json({ is_success: false });
-  }
+        const numbers = data.filter(val => !isNaN(val));
+        const alphabets = data.filter(val => /^[a-zA-Z]$/.test(val));
+        const highestLowercaseAlphabet = alphabets.filter(val => /^[a-z]$/.test(val)).sort().pop() || "";
 
-  // Find the highest lowercase alphabet
-  const highestLowercase = alphabets
-    .filter(char => /^[a-z]$/.test(char))
-    .sort()
-    .pop();
+        const response = {
+            is_success: true,
+            user_id: userId,
+            college_email_id: email,
+            college_roll_number: rollNumber,
+            numbers: numbers,
+            alphabets: alphabets,
+            highest_lowercase: highestLowercaseAlphabet ? [highestLowercaseAlphabet] : []
+        };
 
-  return res.status(200).json({
-    is_success: true,
-    user_id,
-    college_email_id,
-    college_roll_number,
-    numbers,
-    alphabets,
-    highest_lowercase: highestLowercase || null
-  });
+        res.json(response);
+    } catch (error) {
+        res.status(500).json({
+            is_success: false,
+            message: "Error encountered"
+        });
+    }
 });
 
 app.get('/bfhl', (req, res) => {
-  res.status(200).json({ operation_code: 1 });
+    const response = {
+        operation_code: 1
+    };
+    res.status(200).json(response);
 });
 
+const port = process.env.PORT || 5000;
 app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
+    console.log(`Server is running on port ${port}`);
 });
